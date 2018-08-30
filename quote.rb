@@ -9,22 +9,26 @@ require 'json'
 
 require_relative 'lib/quote_connector'
 require_relative 'lib/quote_parser'
+require_relative 'lib/quote_presenter'
 
 class Quote
-  def initialize(connector: QuoteConnector, parser: QuoteParser)
+  def initialize(connector: QuoteConnector,
+                 parser: QuoteParser,
+                 presenter: QuotePresenter)
     @connector = connector
     @parser = parser
+    @presenter = presenter
   end
 
   def random_quote
     server_raw_output = connector.new.call
     quote_hash = parser.new(object_to_parse: server_raw_output).call
-    quote_hash['author'] + ': ' + quote_hash['quote'] + "\n"
+    presenter.new(quote_hash: quote_hash).present
   end
 
   private
 
-  attr_reader :connector, :parser
+  attr_reader :connector, :parser, :presenter
 end
 
 print Quote.new.random_quote if $PROGRAM_NAME == __FILE__
