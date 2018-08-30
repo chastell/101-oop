@@ -7,8 +7,24 @@ end
 
 require 'json'
 
-server_raw_output = HTTParty.get('https://talaikis.com/api/quotes/random/').body
-json = JSON.parse(server_raw_output)
-print json['author']
-print ': '
-puts json['quote']
+require_relative 'lib/quote_connector'
+require_relative 'lib/quote_parser'
+
+class Quote
+  def initialize(connector: QuoteConnector, parser: QuoteParser)
+    @connector = connector
+    @parser = parser
+  end
+
+  def random_quote
+    server_raw_output = connector.new.call
+    quote_hash = parser.new(object_to_parse: server_raw_output).call
+    quote_hash['author'] + ': ' + quote_hash['quote'] + "\n"
+  end
+
+  private
+
+  attr_reader :connector, :parser
+end
+
+print Quote.new.random_quote if $PROGRAM_NAME == __FILE__
