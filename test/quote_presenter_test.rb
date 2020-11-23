@@ -15,7 +15,6 @@ class TestQuotePresenter < Minitest::Test
   end
 
   def test_presenter_present
-    test_hash = { 'author' => 'Rainbow Dash', 'quote' => '[So] Awesome!' }
     presenter = QuotePresenter.new(quote_hash: @test_hash)
     assert_equal(@output, presenter.present)
   end
